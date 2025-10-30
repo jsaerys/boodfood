@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel Administrador - BoodFood</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Navegación principal">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">🍽️</div>
+        <div class="brand-name">Admin BoodFood</div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard" aria-current="page">Panel Principal</button>
+        <button class="nav-item" data-view="pedidos">Pedidos</button>
+        <button class="nav-item" data-view="reservas">Reservas</button>
+        <button class="nav-item" data-view="usuarios">Usuarios</button>
+        <button class="nav-item" data-view="inventario">Inventario</button>
+        <button class="nav-item" data-view="menu">Menú</button>
+        <button class="nav-item" data-view="mesas">Mesas</button>
+      </nav>
+      <div class="nav-item-bottom">
+        <div class="nav-notifications" id="notificationsCount">0</div>
+        <button class="nav-item" data-view="notificaciones">Notificaciones</button>
+        <a href="{{ url_for('main.index') }}" class="nav-item">Volver al Inicio</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h1 id="view-title">Panel Principal</h1>
+        <div class="topbar-actions">
+          <div class="status-indicator" id="connectionStatus" title="Estado de conexión">
+            <span class="status-dot"></span>
+            <span class="status-text">Conectando...</span>
+          </div>
+          <div class="user-menu">
+            <span>{{ current_user.nombre }}</span>
+            <img src="{{ url_for('static', filename='images/default-avatar.png') }}" alt="Avatar" class="user-avatar">
+          </div>
+        </div>
+      </header>
+
+      <section id="view" class="view" role="region" aria-live="polite">
+        <!-- Contenido dinámico cargado por JavaScript -->
+        <div class="dashboard-grid" id="dashboard">
+          <div class="card" id="estadisticas-hoy">
+            <div class="card-header">
+              <h3>Estadísticas de Hoy</h3>
+              <span class="refresh-button" onclick="actualizarEstadisticas()">🔄</span>
+            </div>
+            <div class="card-body">
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <div class="stat-value" id="pedidos-hoy">0</div>
+                  <div class="stat-label">Pedidos</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value" id="reservas-hoy">0</div>
+                  <div class="stat-label">Reservas</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value" id="ventas-hoy">$0</div>
+                  <div class="stat-label">Ventas</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value" id="mesas-ocupadas">0/0</div>
+                  <div class="stat-label">Mesas</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="actividad-reciente">
+            <div class="card-header">
+              <h3>Actividad Reciente</h3>
+            </div>
+            <div class="card-body">
+              <ul class="activity-list" id="lista-actividad">
+                <!-- Actividades recientes -->
+              </ul>
+            </div>
+          </div>
+
+          <div class="card" id="alertas">
+            <div class="card-header">
+              <h3>Alertas</h3>
+            </div>
+            <div class="card-body">
+              <ul class="alerts-list" id="lista-alertas">
+                <!-- Alertas -->
+              </ul>
+            </div>
+          </div>
+
+          <div class="card" id="pedidos-pendientes">
+            <div class="card-header">
+              <h3>Pedidos Pendientes</h3>
+            </div>
+            <div class="card-body">
+              <div class="pedidos-list" id="lista-pedidos">
+                <!-- Pedidos pendientes -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Templates para vistas dinámicas -->
+  <template id="template-pedido">
+    <div class="pedido-card">
+      <div class="pedido-header">
+        <span class="pedido-id"></span>
+        <span class="pedido-estado"></span>
+        <span class="pedido-tiempo"></span>
+      </div>
+      <div class="pedido-items"></div>
+      <div class="pedido-footer">
+        <span class="pedido-total"></span>
+        <div class="pedido-actions"></div>
+      </div>
+    </div>
+  </template>
+
+  <template id="template-mesa">
+    <div class="mesa-card">
+      <div class="mesa-numero"></div>
+      <div class="mesa-estado"></div>
+      <div class="mesa-info">
+        <span class="mesa-ocupantes"></span>
+        <span class="mesa-tiempo"></span>
+      </div>
+      <div class="mesa-actions"></div>
+    </div>
+  </template>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  
+  <script>
+    // Pasar datos del servidor al frontend
+    window.currentUserId = {{ current_user_id }};
+    window.currentUserRole = "{{ current_user.rol }}";
+    window.mesasConfig = {{ mesas_config|tojson|safe }};
+    window.estadoInicial = {{ estado_inicial|tojson|safe }};
+  </script>
+  
+  <!-- Nuestros scripts -->
+  <script src="{{ url_for('static', filename='js/boodfood.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/websocket.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/adminPanel.js') }}"></script>
+</body>
+</html>

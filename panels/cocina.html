@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Cocina - BoodFood{% endblock %}
+
+{% block content %}
+<div class="panel-container">
+    <div class="panel-header">
+        <h1>🍳 Panel de Cocina</h1>
+        <p>Gestión de pedidos en tiempo real</p>
+    </div>
+
+    <div class="panel-content">
+        <div class="panel-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="pendientes-count">0</div>
+                <div class="stat-label">Pendientes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="preparando-count">0</div>
+                <div class="stat-label">En Preparación</div>
+            </div>
+        </div>
+
+        <div class="pedidos-container">
+            <div class="pedidos-column">
+                <h2>Pedidos Pendientes</h2>
+                <div id="pedidos-pendientes" class="pedidos-list">
+                    <!-- Los pedidos se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+
+            <div class="pedidos-column">
+                <h2>En Preparación</h2>
+                <div id="pedidos-preparando" class="pedidos-list">
+                    <!-- Los pedidos se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let pedidosActuales = [];
+
+// Cargar pedidos iniciales y configurar WebSocket
+function inicializarPanel() {
+    // Cargar pedidos iniciales
+    fetch('/cocina/api/pedidos-pendientes')
+        .then(response => response.json())
+        .then(pedidos => {
+            pedidosActuales = pedidos;
+            mostrarPedidos();
+        })
+        .catch(error => console.error('Error al cargar pedidos:', error));
+
+    // Configurar WebSocket
+    boodFoodSocket.on('pedido_recibido', (data) => {
+        pedidosActuales.push(data.pedido);
+        mostrarPedidos();
+        BoodFood.mostrarNotificacion('¡Nuevo pedido recibido!', 'info');
+    });
+
+    boodFoodSocket.on('estado_pedido_actualizado', (data) => {
+        const index = pedidosActuales.findIndex(p => p.id === data.pedido_id);
+        if (index !== -1) {
+            pedidosActuales[index] = data.pedido;
+        }
+        mostrarPedidos();
+    });
+}
+
+function mostrarPedidos() {
+    const pendientesDiv = document.getElementById('pedidos-pendientes');
+    const preparandoDiv = document.getElementById('pedidos-preparando');
+    
+    const pendientes = pedidosActuales.filter(p => p.estado === 'pendiente');
+    const preparando = pedidosActuales.filter(p => p.estado === 'preparando');
+    
+    // Actualizar contadores
+    document.getElementById('pendientes-count').textContent = pendientes.length;
+    document.getElementById('preparando-count').textContent = preparando.length;
+    
+    // Mostrar pedidos pendientes
+    pendientesDiv.innerHTML = pendientes.map(pedido => crearTarjetaPedido(pedido)).join('');
+    
+    // Mostrar pedidos en preparación
+    preparandoDiv.innerHTML = preparando.map(pedido => crearTarjetaPedido(pedido)).join('');
+}
+
+function crearTarjetaPedido(pedido) {
+    const fecha = new Date(pedido.fecha_pedido);
+    const tiempo = fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+    
+    const items = pedido.items.map(item => `
+        <div class="pedido-item">
+            <span class="item-cantidad">${item.cantidad}x</span>
+            <span class="item-nombre">${item.menu_item.nombre}</span>
+            ${item.notas ? `<span class="item-notas">📝 ${item.notas}</span>` : ''}
+        </div>
+    `).join('');
+    
+    return `
+        <div class="pedido-card" data-id="${pedido.id}">
+            <div class="pedido-header">
+                <span class="pedido-numero">#${pedido.id}</span>
+                <span class="pedido-tipo badge badge-${pedido.tipo}">${pedido.tipo}</span>
+                <span class="pedido-tiempo">${tiempo}</span>
+            </div>
+            
+            ${pedido.mesa_id ? `<div class="pedido-mesa">Mesa ${pedido.mesa_id}</div>` : ''}
+            
+            <div class="pedido-items">
+                ${items}
+            </div>
+            
+            ${pedido.notas ? `<div class="pedido-notas">Notas: ${pedido.notas}</div>` : ''}
+            
+            <div class="pedido-actions">
+                ${pedido.estado === 'pendiente' ? `
+                    <button onclick="cambiarEstado(${pedido.id}, 'preparando')" class="btn btn-warning btn-sm">
+                        Preparar
+                    </button>
+                ` : ''}
+                ${pedido.estado === 'preparando' ? `
+                    <button onclick="despacharPedido(${pedido.id})" class="btn btn-success btn-sm">
+                        Despachar
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+function cambiarEstado(pedidoId, nuevoEstado) {
+    fetch(`/cocina/api/pedido/${pedidoId}/estado`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ estado: nuevoEstado })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Emitir evento de actualización vía WebSocket
+            boodFoodSocket.emit('actualizar_estado_pedido', {
+                pedido_id: pedidoId,
+                estado: nuevoEstado,
+                pedido: data.pedido
+            });
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function despacharPedido(pedidoId) {
+    fetch(`/cocina/api/pedido/${pedidoId}/despachar`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Emitir evento de despacho vía WebSocket
+            boodFoodSocket.emit('actualizar_estado_pedido', {
+                pedido_id: pedidoId,
+                estado: 'despachado',
+                pedido: data.pedido
+            });
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Inicializar panel al cargar la página
+document.addEventListener('DOMContentLoaded', inicializarPanel);
+</script>
+{% endblock %}

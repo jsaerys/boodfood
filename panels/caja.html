@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Caja - BoodFood{% endblock %}
+
+{% block content %}
+<div class="panel-container">
+    <div class="panel-header">
+        <h1>💰 Panel de Caja</h1>
+        <p>Gestión de facturas y pedidos de piscina</p>
+    </div>
+
+    <div class="panel-content">
+        <div class="tabs">
+            <button class="tab-button active" onclick="cambiarTab('facturas')">Facturas Pendientes</button>
+            <button class="tab-button" onclick="cambiarTab('piscina')">Pedidos Piscina</button>
+        </div>
+
+        <!-- Tab Facturas -->
+        <div id="tab-facturas" class="tab-content active">
+            <div id="facturas-list" class="facturas-container">
+                <!-- Las facturas se cargarán aquí -->
+            </div>
+        </div>
+
+        <!-- Tab Pedidos Piscina -->
+        <div id="tab-piscina" class="tab-content">
+            <div id="pedidos-piscina-list" class="pedidos-container">
+                <!-- Los pedidos de piscina se cargarán aquí -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let facturasActuales = [];
+let pedidosPiscinaActuales = [];
+
+function cambiarTab(tab) {
+    // Cambiar botones activos
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Cambiar contenido activo
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    
+    // Cargar datos correspondientes
+    if (tab === 'facturas') {
+        cargarFacturas();
+    } else if (tab === 'piscina') {
+        cargarPedidosPiscina();
+    }
+}
+
+function cargarFacturas() {
+    fetch('/caja/api/facturas-pendientes')
+        .then(response => response.json())
+        .then(facturas => {
+            facturasActuales = facturas;
+            mostrarFacturas();
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function mostrarFacturas() {
+    const container = document.getElementById('facturas-list');
+    
+    if (facturasActuales.length === 0) {
+        container.innerHTML = '<p class="empty-message">No hay facturas pendientes</p>';
+        return;
+    }
+    
+    container.innerHTML = facturasActuales.map(factura => `
+        <div class="factura-card">
+            <div class="factura-header">
+                <h3>Factura #${factura.id}</h3>
+                ${factura.mesa ? `<span class="badge">Mesa ${factura.mesa.numero}</span>` : ''}
+            </div>
+            
+            <div class="factura-info">
+                <p><strong>Cliente:</strong> Usuario #${factura.usuario_id}</p>
+                <p><strong>Fecha:</strong> ${new Date(factura.fecha_creacion).toLocaleString('es-CO')}</p>
+            </div>
+            
+            ${factura.pedido_detalle ? `
+                <div class="factura-items">
+                    <h4>Items:</h4>
+                    ${factura.pedido_detalle.items.map(item => `
+                        <div class="factura-item">
+                            <span>${item.cantidad}x ${item.menu_item.nombre}</span>
+                            <span>$${item.subtotal.toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : ''}
+            
+            <div class="factura-total">
+                <strong>Total:</strong>
+                <span class="total-amount">$${factura.total.toFixed(2)}</span>
+            </div>
+            
+            <div class="factura-actions">
+                <select id="metodo-pago-${factura.id}" class="form-control">
+                    <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta">Tarjeta</option>
+                    <option value="transferencia">Transferencia</option>
+                </select>
+                <button onclick="pagarFactura(${factura.id})" class="btn btn-success">
+                    Registrar Pago
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function pagarFactura(facturaId) {
+    const metodoPago = document.getElementById(`metodo-pago-${facturaId}`).value;
+    
+    fetch(`/caja/api/factura/${facturaId}/pagar`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ metodo_pago: metodoPago })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Pago registrado exitosamente');
+            cargarFacturas();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function cargarPedidosPiscina() {
+    fetch('/caja/api/pedidos-piscina')
+        .then(response => response.json())
+        .then(pedidos => {
+            pedidosPiscinaActuales = pedidos;
+            mostrarPedidosPiscina();
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function mostrarPedidosPiscina() {
+    const container = document.getElementById('pedidos-piscina-list');
+    
+    if (pedidosPiscinaActuales.length === 0) {
+        container.innerHTML = '<p class="empty-message">No hay pedidos de piscina pendientes</p>';
+        return;
+    }
+    
+    container.innerHTML = pedidosPiscinaActuales.map(pedido => `
+        <div class="pedido-card">
+            <div class="pedido-header">
+                <span class="pedido-numero">#${pedido.id}</span>
+                <span class="pedido-tiempo">${new Date(pedido.fecha_pedido).toLocaleTimeString('es-CO')}</span>
+            </div>
+            
+            <div class="pedido-items">
+                ${pedido.items.map(item => `
+                    <div class="pedido-item">
+                        <span>${item.cantidad}x ${item.menu_item.nombre}</span>
+                        <span>$${item.subtotal.toFixed(2)}</span>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="pedido-total">
+                <strong>Total:</strong> $${pedido.total.toFixed(2)}
+            </div>
+            
+            <button onclick="despacharPedidoPiscina(${pedido.id})" class="btn btn-primary btn-block">
+                Despachar Pedido
+            </button>
+        </div>
+    `).join('');
+}
+
+function despacharPedidoPiscina(pedidoId) {
+    fetch(`/caja/api/pedido/${pedidoId}/despachar`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Pedido despachado');
+            cargarPedidosPiscina();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Cargar datos al inicio
+cargarFacturas();
+setInterval(() => {
+    const activeTab = document.querySelector('.tab-content.active');
+    if (activeTab.id === 'tab-facturas') {
+        cargarFacturas();
+    } else if (activeTab.id === 'tab-piscina') {
+        cargarPedidosPiscina();
+    }
+}, 5000);
+</script>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión - BoodFood{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Iniciar Sesión</h2>
+        <p class="auth-subtitle">Accede a tu cuenta para hacer reservas y pedidos</p>
+        
+        <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required class="form-control">
+            </div>
+            
+            <div class="form-group checkbox-group">
+                <label>
+                    <input type="checkbox" name="remember" value="true">
+                    Recordarme
+                </label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>¿No tienes cuenta? <a href="{{ url_for('auth.register') }}">Regístrate aquí</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

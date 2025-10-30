@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block title %}Hacer Reserva - BoodFood{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Hacer una Reserva</h1>
+        <p>Reserva tu mesa y disfruta de la mejor experiencia</p>
+    </div>
+</div>
+
+<div class="reservas-container">
+    <div class="container">
+        <form id="form-reserva" class="reserva-form">
+            <div class="form-section">
+                <h2>Información de la Reserva</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha">Fecha *</label>
+                        <input type="date" id="fecha" name="fecha" required class="form-control" min="{{ now.strftime('%Y-%m-%d') }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hora">Hora *</label>
+                        <input type="time" id="hora" name="hora" required class="form-control" min="10:00" max="22:00">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="numero_personas">Número de Personas *</label>
+                        <input type="number" id="numero_personas" name="numero_personas" required class="form-control" min="1" max="20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="zona_mesa">Zona Preferida</label>
+                        <select id="zona_mesa" name="zona_mesa" class="form-control">
+                            <option value="interior">Interior</option>
+                            <option value="terraza">Terraza</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Información de Contacto</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre_reserva">Nombre Completo *</label>
+                        <input type="text" id="nombre_reserva" name="nombre_reserva" required class="form-control" value="{{ current_user.nombre if current_user.is_authenticated else '' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telefono_reserva">Teléfono *</label>
+                        <input type="tel" id="telefono_reserva" name="telefono_reserva" required class="form-control" value="{{ current_user.telefono if current_user.is_authenticated else '' }}">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email_reserva">Email *</label>
+                    <input type="email" id="email_reserva" name="email_reserva" required class="form-control" value="{{ current_user.email if current_user.is_authenticated else '' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="notas">Notas Especiales</label>
+                    <textarea id="notas" name="notas" class="form-control" rows="3" placeholder="Alergias, preferencias, ocasión especial, etc."></textarea>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Mesas Disponibles</h2>
+                <div id="mesas-disponibles" class="mesas-grid">
+                    {% for mesa in mesas %}
+                    <div class="mesa-card" data-id="{{ mesa.id }}">
+                        <div class="mesa-numero">Mesa {{ mesa.numero }}</div>
+                        <div class="mesa-info">
+                            <span class="mesa-capacidad">👥 {{ mesa.capacidad }} personas</span>
+                            <span class="mesa-tipo badge badge-{{ mesa.tipo }}">{{ mesa.tipo }}</span>
+                        </div>
+                        <div class="mesa-ubicacion">📍 {{ mesa.ubicacion }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">Confirmar Reserva</button>
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline btn-lg">Cancelar</a>
+            </div>
+        </form>
+        
+        <div class="reservas-info">
+            <h3>Información Importante</h3>
+            <ul>
+                <li>Las reservas deben hacerse con al menos 2 horas de anticipación</li>
+                <li>El horario de atención es de 10:00 AM a 10:00 PM</li>
+                <li>La reserva se mantendrá por 15 minutos después de la hora indicada</li>
+                <li>Para grupos de más de 10 personas, contactar directamente al restaurante</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('form-reserva').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        fecha: document.getElementById('fecha').value,
+        hora: document.getElementById('hora').value,
+        numero_personas: parseInt(document.getElementById('numero_personas').value),
+        zona_mesa: document.getElementById('zona_mesa').value,
+        nombre_reserva: document.getElementById('nombre_reserva').value,
+        telefono_reserva: document.getElementById('telefono_reserva').value,
+        email_reserva: document.getElementById('email_reserva').value,
+        notas: document.getElementById('notas').value
+    };
+    
+    try {
+        const response = await fetch('/api/reservas/crear', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('¡Reserva creada exitosamente! Código de reserva: ' + data.reserva.codigo_reserva);
+            window.location.href = '/';
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al crear la reserva. Por favor intenta nuevamente.');
+    }
+});
+
+// Verificar disponibilidad al cambiar fecha
+document.getElementById('fecha').addEventListener('change', async function() {
+    const fecha = this.value;
+    if (!fecha) return;
+    
+    try {
+        const response = await fetch(`/api/reservas/disponibilidad?fecha=${fecha}`);
+        const data = await response.json();
+        
+        // Actualizar visualización de mesas disponibles
+        document.querySelectorAll('.mesa-card').forEach(card => {
+            const mesaNumero = card.querySelector('.mesa-numero').textContent.replace('Mesa ', '');
+            if (data.reservadas.includes(mesaNumero)) {
+                card.classList.add('mesa-reservada');
+            } else {
+                card.classList.remove('mesa-reservada');
+            }
+        });
+    } catch (error) {
+        console.error('Error al verificar disponibilidad:', error);
+    }
+});
+</script>
+
+<style>
+.reservas-container {
+    padding: 3rem 0;
+    background-color: var(--light-color);
+}
+
+.reserva-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--light-color);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.form-section h2 {
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.mesas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.mesa-card {
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.mesa-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-5px);
+}
+
+.mesa-card.mesa-reservada {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f0f0f0;
+}
+
+.mesa-numero {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.mesa-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.mesa-capacidad {
+    font-size: 0.9rem;
+}
+
+.mesa-ubicacion {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.reservas-info {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.reservas-info h3 {
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+}
+
+.reservas-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.reservas-info li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.reservas-info li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .mesas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

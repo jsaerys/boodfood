@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Autenticación Requerida - BoodFood{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>🔒 Autenticación Requerida</h2>
+        <p class="auth-subtitle">Debes iniciar sesión para acceder a esta función</p>
+        
+        <div style="text-align: center; margin: 2rem 0;">
+            <p>Para hacer reservas, pedidos y acceder a todas las funcionalidades de BoodFood, necesitas tener una cuenta.</p>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; flex-direction: column;">
+            <a href="{{ url_for('auth.login', next=redirect_to) }}" class="btn btn-primary btn-block">
+                Iniciar Sesión
+            </a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-outline btn-block">
+                Crear Cuenta Nueva
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

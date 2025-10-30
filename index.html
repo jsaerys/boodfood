@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}BoodFood - Restaurante, Piscina y Eventos{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">Bienvenido a BoodFood</h1>
+        <p class="hero-subtitle">Disfruta de la mejor comida, piscina y entretenimiento</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('main.menu') }}" class="btn btn-primary btn-lg">Ver Menú</a>
+            <a href="{{ url_for('main.reservas') }}" class="btn btn-outline btn-lg">Hacer Reserva</a>
+        </div>
+    </div>
+</section>
+
+<!-- Servicios Destacados -->
+<section class="services-preview">
+    <div class="container">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🍽️</div>
+                <h3>Restaurante</h3>
+                <p>Deliciosa comida con ingredientes frescos y recetas únicas</p>
+                <a href="{{ url_for('main.menu') }}" class="btn btn-link">Ver Menú →</a>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🏊</div>
+                <h3>Piscina</h3>
+                <p>Relájate y disfruta de nuestra piscina mientras pides desde tu móvil</p>
+                <a href="{{ url_for('main.servicios') }}" class="btn btn-link">Más Info →</a>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🎱</div>
+                <h3>Entretenimiento</h3>
+                <p>Billar, juegos y diversión para toda la familia</p>
+                <a href="{{ url_for('main.servicios') }}" class="btn btn-link">Ver Servicios →</a>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🎉</div>
+                <h3>Eventos</h3>
+                <p>Alquila nuestro salón para tus eventos especiales</p>
+                <a href="{{ url_for('main.servicios') }}" class="btn btn-link">Reservar →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Características -->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">¿Por qué elegirnos?</h2>
+        
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Pedidos en Línea</h3>
+                <p>Ordena desde tu mesa o desde la piscina con tu teléfono</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🚚</div>
+                <h3>Domicilios</h3>
+                <p>Disfruta de nuestra comida en la comodidad de tu hogar</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">👨‍🍳</div>
+                <h3>Equipo Profesional</h3>
+                <p>Personal capacitado para brindarte el mejor servicio</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">⭐</div>
+                <h3>Calidad Garantizada</h3>
+                <p>Ingredientes frescos y preparación de primera calidad</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta">
+    <div class="container">
+        <h2>¿Listo para una experiencia única?</h2>
+        <p>Reserva tu mesa ahora y disfruta de todo lo que BoodFood tiene para ti</p>
+        <a href="{{ url_for('main.reservas') }}" class="btn btn-primary btn-lg">Reservar Ahora</a>
+    </div>
+</section>
+{% endblock %}
