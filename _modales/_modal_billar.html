@@ -1,0 +1,56 @@
+﻿<!-- Modal de Billar -->
+<div id="modal-reserva-billar" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <span class="close-modal" onclick="cerrarModal('modal-reserva-billar')">&times;</span>
+        <h2>Reservar <span id="titulo-servicio-billar">Mesa de Billar</span></h2>
+        <form method="POST" action="{{ url_for('reservas.crear_reserva') }}" onsubmit="return enviarReservaServicio(event, 'billar')">
+            <input type="hidden" name="servicio_id" id="servicio_id_billar" value="">
+            <input type="hidden" name="tipo" value="billar">
+            
+            <div class="form-group">
+                <label for="fecha_billar">Fecha: *</label>
+                <input type="date" id="fecha_billar" name="fecha" required min="{{ hoy or '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="hora_billar">Hora: *</label>
+                <input type="time" id="hora_billar" name="hora" required min="10:00" max="23:00">
+                <small style="color: #666;">Horario: 10:00 AM - 11:00 PM</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="duracion_billar">Duración (horas): *</label>
+                <input type="number" id="duracion_billar" name="detalles[duracion_horas]" min="1" max="8" value="2" required>
+                <small style="color: #666;">💰 Precio por hora: $15.000</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="personas_billar">Número de personas: *</label>
+                <input type="number" id="personas_billar" name="personas" min="1" max="8" value="2" required>
+                <small style="color: #666;">Máximo 8 personas por mesa</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="mesa_billar">Selecciona una mesa: *</label>
+                <select id="mesa_billar" name="detalles[mesa_numero]" required>
+                    <option value="">-- Elige una mesa --</option>
+                    <option value="1">🎱 Mesa 1</option>
+                    <option value="2">🎱 Mesa 2</option>
+                    <option value="3">🎱 Mesa 3</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #4caf50;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #2e7d32;">Total estimado:</strong>
+                    <span id="total_billar" style="font-size: 1.3em; color: #4caf50; font-weight: bold;">$0</span>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn btn-success" style="flex: 1;">✅ Confirmar Reserva</button>
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal('modal-reserva-billar')" style="flex: 1;">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+﻿<!-- Modal de Piscina -->
+<div id="modal-reserva-piscina" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <span class="close-modal" onclick="cerrarModal('modal-reserva-piscina')">&times;</span>
+        <h2>Reservar <span id="titulo-servicio-piscina">Piscina</span></h2>
+        <form method="POST" action="{{ url_for('reservas.crear_reserva') }}" onsubmit="return enviarReservaServicio(event, 'piscina')">
+            <input type="hidden" name="servicio_id" id="servicio_id_piscina" value="">
+            <input type="hidden" name="tipo" value="piscina">
+            
+            <div class="form-group">
+                <label for="fecha_piscina">Fecha: *</label>
+                <input type="date" id="fecha_piscina" name="fecha" required min="{{ hoy or '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="hora_piscina">Hora: *</label>
+                <input type="time" id="hora_piscina" name="hora" required min="09:00" max="20:00">
+                <small style="color: #666;">Horario de servicio: 9:00 AM - 8:00 PM</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="personas_piscina">Número de personas: *</label>
+                <input type="number" id="personas_piscina" name="personas" min="1" max="50" value="2" required>
+                <small style="color: #666;">💰 Precio por entrada: $10.000 por persona</small>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="incluye_toallas" name="detalles[incluye_toallas]" value="si" style="margin-right: 8px;">
+                    <span>🏖️ Incluir toallas (+$5.000 por persona)</span>
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="ninos_piscina" name="detalles[area_ninos]" value="si" style="margin-right: 8px;">
+                    <span>Incluir acceso a área de niños 👶</span>
+                </label>
+            </div>
+            
+            <div class="form-group" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #1976d2;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #0d47a1;">Total estimado:</strong>
+                    <span id="total_piscina" style="font-size: 1.3em; color: #1976d2; font-weight: bold;">$0</span>
+                </div>
+                <small style="color: #1976d2; margin-top: 8px; display: block;">🎉 Grupos de más de 10 personas obtienen 15% de descuento</small>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn btn-success" style="flex: 1;">✅ Reservar Piscina</button>
+                <button type="button" class="btn btn-primary" onclick="abrirPedidosPiscina()" style="flex: 1;">🍟 Pedir Comida</button>
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal('modal-reserva-piscina')" style="flex: 1;">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,588 @@
+/* Panel de Administración Estilos */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #343a40;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+/* Estadísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+/* Lista de Actividades */
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.activity-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+/* Alertas */
+.alerts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.alert-item {
+    padding: 0.75rem;
+    border-left: 4px solid;
+    background: #f8f9fa;
+    margin-bottom: 0.5rem;
+}
+
+.alert-item.urgent {
+    border-color: #dc3545;
+    background: #fff5f5;
+}
+
+.alert-item.warning {
+    border-color: #ffc107;
+    background: #fff9e6;
+}
+
+.alert-item.info {
+    border-color: #0dcaf0;
+    background: #f0fdff;
+}
+
+/* Estado de Conexión */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background: #f8f9fa;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dc3545;
+}
+
+.status-dot.connected {
+    background: #198754;
+}
+
+.status-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Menú de Usuario */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Notificaciones */
+.nav-notifications {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Botón de Actualizar */
+.refresh-button {
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: transform 0.2s;
+}
+
+.refresh-button:hover {
+    transform: rotate(180deg);
+}
+
+/* Pedidos y Mesas */
+.pedidos-list,
+.mesas-grid {
+    display: grid;
+    gap: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.mesas-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+/* Estilos para las tarjetas de pedidos */
+.pedido-card {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.pedido-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.pedido-items {
+    margin-bottom: 0.75rem;
+}
+
+.pedido-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Estilos para las tarjetas de mesas */
+.mesa-card {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.mesa-numero {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.mesa-estado {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.mesa-info {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}/* ===================================================================
+   SISTEMA DE MODALES GLOBAL
+   =================================================================== */
+
+/* Overlay del modal */
+.modal-overlay {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Contenido del modal */
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+    position: relative;
+    animation: slideUp 0.3s ease-out;
+}
+
+.modal-large {
+    max-width: 900px;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Botón cerrar */
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+    background: transparent;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    background: #f5f5f5;
+    color: #333;
+    transform: rotate(90deg);
+}
+
+/* Títulos de modal */
+.modal-content h2 {
+    margin: 0 0 25px 0;
+    color: #2c3e50;
+    font-size: 24px;
+    border-bottom: 2px solid #7c3aed;
+    padding-bottom: 10px;
+}
+
+/* Formularios en modales */
+.reserva-form {
+    margin-top: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #34495e;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px 12px;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Acciones de modal */
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e1e8ed;
+}
+
+.btn-modal {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-primary {
+    background: #7c3aed;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #6d28d9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+/* Detalles de reserva */
+.modal-detalle {
+    max-width: 750px;
+}
+
+.codigo-grande {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #7c3aed;
+    margin: 10px 0 25px 0;
+    padding: 15px;
+    background: linear-gradient(135deg, #f3e7ff 0%, #e9d5ff 100%);
+    border-radius: 12px;
+}
+
+.reserva-detalle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.info-section {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid #7c3aed;
+}
+
+.info-section h3 {
+    margin: 0 0 15px 0;
+    color: #1f2937;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row strong {
+    color: #6b7280;
+    font-weight: 600;
+}
+
+/* Badges para tipos y estados */
+.tipo-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tipo-mesa { background: #dbeafe; color: #1e40af; }
+.tipo-piscina { background: #cffafe; color: #0e7490; }
+.tipo-billar { background: #fce7f3; color: #9f1239; }
+.tipo-evento { background: #fef3c7; color: #92400e; }
+
+/* Mensajes de estado */
+.no-data-message {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b7280;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.spinner {
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #7c3aed;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsividad de modales */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 20px;
+        max-height: 95vh;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn-modal {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .reserva-detalle-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .codigo-grande {
+        font-size: 24px;
+        padding: 12px;
+    }
+}

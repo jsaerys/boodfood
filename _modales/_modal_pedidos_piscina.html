@@ -1,0 +1,136 @@
+<!-- Modal de Pedidos Piscina -->
+<div id="modal-pedidos-piscina" class="modal-overlay" style="display: none;">
+	<div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+		<span class="close-modal" onclick="cerrarModal('modal-pedidos-piscina')">&times;</span>
+		<h2>🍟 Pedidos a la Piscina</h2>
+		<p style="color: #666; margin-bottom: 20px;">Selecciona los productos que deseas recibir en la piscina</p>
+
+		<div id="productos-piscina-container" style="margin-bottom: 20px;">
+			<!-- Los productos se cargarán aquí dinámicamente -->
+			<div style="text-align: center; padding: 20px;">
+				<p>Cargando productos disponibles...</p>
+			</div>
+		</div>
+
+		<div id="carrito-piscina-resumen" style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;">
+			<h3 style="margin-top: 0;">🛒 Tu Pedido</h3>
+			<div id="carrito-piscina-items"></div>
+			<div style="border-top: 2px solid #ddd; margin-top: 10px; padding-top: 10px;">
+				<div style="display: flex; justify-content: space-between; align-items: center;">
+					<strong style="font-size: 1.2em;">Total:</strong>
+					<span id="carrito-piscina-total" style="font-size: 1.3em; color: #1976d2; font-weight: bold;">$0</span>
+				</div>
+			</div>
+		</div>
+
+		<div style="display: flex; gap: 10px; margin-top: 20px;">
+			<button type="button" class="btn btn-success" id="btn-confirmar-pedido-piscina" style="flex: 1;" disabled>
+				✅ Confirmar Pedido
+			</button>
+			<button type="button" class="btn btn-secondary" onclick="cerrarModal('modal-pedidos-piscina')" style="flex: 1;">
+				Cancelar
+			</button>
+		</div>
+	</div>
+</div>
+
+<style>
+.producto-piscina-card {
+	background: white;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 15px;
+	margin-bottom: 15px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	transition: box-shadow 0.3s;
+}
+
+.producto-piscina-card:hover {
+	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.producto-piscina-info {
+	flex: 1;
+}
+
+.producto-piscina-info h4 {
+	margin: 0 0 5px 0;
+	color: #333;
+}
+
+.producto-piscina-info p {
+	margin: 0 0 8px 0;
+	color: #666;
+	font-size: 0.9em;
+}
+
+.producto-piscina-precio {
+	font-size: 1.1em;
+	color: #1976d2;
+	font-weight: bold;
+}
+
+.producto-piscina-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.producto-piscina-actions button {
+	padding: 8px 15px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-weight: bold;
+	transition: background 0.3s;
+}
+
+.btn-agregar-piscina {
+	background: #4caf50;
+	color: white;
+}
+
+.btn-agregar-piscina:hover {
+	background: #45a049;
+}
+
+.carrito-item-piscina {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 0;
+	border-bottom: 1px solid #ddd;
+}
+
+.carrito-item-piscina:last-child {
+	border-bottom: none;
+}
+
+.cantidad-controls {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.cantidad-controls button {
+	width: 30px;
+	height: 30px;
+	border: 1px solid #ddd;
+	background: white;
+	border-radius: 4px;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.cantidad-controls button:hover {
+	background: #f0f0f0;
+}
+
+.cantidad-controls span {
+	min-width: 30px;
+	text-align: center;
+	font-weight: bold;
+}
+</style>
