@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prueba de Modales</title>
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prueba de Modales</h1>
+    <button onclick="abrirModal('piscina')">Abrir Piscina</button>
+    <button onclick="abrirModal('billar')">Abrir Billar</button>
+    <button onclick="abrirModal('evento')">Abrir Evento</button>
+
+    <div id="modal-reserva-piscina" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>Modal Piscina</h2>
+            <button onclick="cerrarModal('modal-reserva-piscina')">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="modal-reserva-billar" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>Modal Billar</h2>
+            <button onclick="cerrarModal('modal-reserva-billar')">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="modal-reserva-evento" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>Modal Evento</h2>
+            <button onclick="cerrarModal('modal-reserva-evento')">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal(tipo) {
+            const modal = document.getElementById('modal-reserva-' + tipo);
+            if (modal) {
+                modal.style.display = 'flex';
+                console.log('Modal abierto:', tipo);
+            } else {
+                console.error('Modal no encontrado:', tipo);
+            }
+        }
+
+        function cerrarModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = 'none';
+                console.log('Modal cerrado:', id);
+            }
+        }
+    </script>
+</body>
+</html>
